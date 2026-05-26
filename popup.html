@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: #0f1120; --bg2: #161a2e; --bg3: #1c2240; --bg4: #232a4a;
+    --red: #c23b3b; --red2: #e04848; --redbg: rgba(194,59,59,0.08); --redborder: rgba(194,59,59,0.3);
+    --redmetal: linear-gradient(135deg, #8b2232, #c23b3b, #d4574a);
+    --orange: #e8875b; --green: #2ec4b6; --blue: #3a86ff;
+    --t1: #e8eaf0; --t2: #9ba3bf; --t3: #5c6484; --t4: #3a4060;
+    --border: #1e2545; --border2: #2a3055;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+  body { width: 400px; max-height: 560px; font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--t1); overflow-y: auto; -webkit-font-smoothing: antialiased; }
+
+  .header { padding: 14px 18px 0; display: flex; align-items: center; justify-content: space-between; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .logo { width: 34px; height: 34px; border-radius: 7px; overflow: hidden; }
+  .logo img { width: 100%; height: 100%; object-fit: contain; }
+  .header h1 { font-size: 14px; font-weight: 700; }
+  .header .ver { font-size: 10px; color: var(--t3); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px rgba(46,196,182,0.4); }
+  .dot.danger { background: var(--red2); box-shadow: 0 0 8px rgba(224,72,72,0.4); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 50% { opacity: 0.3; } }
+
+  .tabs { display: flex; padding: 12px 18px 0; gap: 4px; }
+  .tab { flex: 1; padding: 8px 0; text-align: center; font-size: 10px; font-weight: 700; color: var(--t3); cursor: pointer; border-radius: 6px; transition: 0.15s; text-transform: uppercase; letter-spacing: 0.8px; }
+  .tab:hover { color: var(--t2); background: rgba(255,255,255,0.02); }
+  .tab.active { color: var(--t1); background: var(--bg3); }
+  .panel { display: none; padding: 14px 18px 18px; }
+  .panel.active { display: block; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  .stat { text-align: center; padding: 10px 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; }
+  .stat .num { font-size: 20px; font-weight: 800; }
+  .stat .lbl { font-size: 8px; color: var(--t2); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.8px; }
+  .stat.danger { border-color: var(--red); background: var(--redbg); }
+  .stat.danger .num { color: var(--red2); }
+
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+  .card-row { display: flex; align-items: center; justify-content: space-between; }
+  .card-row + .card-row { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .card-label { font-size: 10px; color: var(--t2); }
+  .card-value { font-size: 11px; color: var(--t2); }
+
+  .alert { border: 1px solid var(--redborder); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; display: none; cursor: pointer; transition: 0.15s; background: var(--redbg); }
+  .alert.show { display: flex; align-items: center; gap: 10px; }
+  .alert:hover { background: rgba(194,59,59,0.14); }
+  .alert-text { font-size: 11px; font-weight: 700; color: var(--red2); }
+  .alert-sub { font-size: 9px; color: var(--t3); margin-top: 1px; }
+
+  .btn { width: 100%; padding: 8px; border: 1px solid var(--border2); border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.15s; margin-bottom: 4px; background: var(--bg3); color: var(--t2); display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn:hover:not(:disabled) { border-color: var(--t3); color: var(--t1); background: var(--bg4); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-danger { border-color: var(--redborder); color: var(--red2); background: var(--redbg); }
+  .btn-danger:hover { background: rgba(194,59,59,0.14); border-color: var(--red); }
+  .btn-warn { border-color: rgba(58,134,255,0.3); color: var(--blue); background: rgba(58,134,255,0.06); }
+  .btn-warn:hover { background: rgba(58,134,255,0.12); }
+  .btn-sm { padding: 6px 12px; font-size: 10px; width: auto; }
+  .btn-row { display: flex; gap: 4px; }
+  .btn-row .btn { flex: 1; }
+
+  /* Red metallic accent bar */
+  .red-bar { height: 3px; background: var(--redmetal); border-radius: 0 0 2px 2px; margin: 0 18px; }
+
+  .about-hero { text-align: center; padding: 14px 0 18px; }
+  .about-hero .shield { font-size: 40px; margin-bottom: 8px; }
+  .about-hero p { font-size: 11px; color: var(--t2); line-height: 1.7; max-width: 310px; margin: 0 auto; }
+  .feat-list { display: grid; gap: 4px; }
+  .feat { padding: 8px 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; font-size: 10px; color: var(--t2); line-height: 1.6; border-left: 3px solid var(--red); }
+  
+  .feat strong { color: var(--t1); }
+  .about-link { display: block; padding: 8px 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; font-size: 10px; color: var(--t2); text-decoration: none; transition: 0.15s; }
+  .about-link:hover { border-color: var(--red); color: var(--t1); }
+
+  .section { margin-bottom: 14px; }
+  .section-title { font-size: 9px; font-weight: 700; color: var(--t2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .section-title::before { content: ''; width: 3px; height: 10px; background: var(--redmetal); border-radius: 2px; }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .toggle-label { font-size: 11px; font-weight: 600; color: var(--t1); }
+  .toggle-desc { font-size: 9px; color: var(--t2); margin-top: 2px; }
+  .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle .slider { position: absolute; inset: 0; background: var(--bg4); border-radius: 20px; cursor: pointer; transition: 0.2s; border: 1px solid var(--border2); }
+  .toggle .slider::before { content: ''; position: absolute; width: 14px; height: 14px; left: 2px; bottom: 2px; background: var(--t3); border-radius: 50%; transition: 0.2s; }
+  .toggle input:checked + .slider { background: var(--red); border-color: var(--red); }
+  .toggle input:checked + .slider::before { transform: translateX(16px); background: #fff; }
+
+  textarea, .feed-input { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; color: var(--t1); font-family: 'SF Mono', 'Fira Code', monospace; font-size: 10px; padding: 8px 10px; resize: vertical; line-height: 1.6; }
+  textarea { min-height: 60px; }
+  textarea:focus, .feed-input:focus { outline: none; border-color: var(--red); }
+  textarea:disabled, .feed-input:disabled { opacity: 0.3; }
+  textarea::placeholder, .feed-input::placeholder { color: var(--t4); }
+  .hint { font-size: 9px; color: var(--t2); margin-bottom: 6px; line-height: 1.5; }
+  .result-msg { font-size: 10px; color: var(--t3); margin-top: 4px; min-height: 12px; }
+  .inline-badge { font-size: 9px; color: var(--t3); margin-left: 4px; }
+
+  .feed-url { font-size: 9px; font-family: monospace; color: var(--t3); padding: 6px 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 3px; word-break: break-all; line-height: 1.4; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .feed-url .fu-text { flex: 1; min-width: 0; }
+  .feed-url .fu-default { font-size: 8px; color: var(--green); font-family: sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .feed-url .fu-remove { background: none; border: none; color: var(--t3); cursor: pointer; font-size: 12px; padding: 0 2px; transition: 0.15s; }
+  .feed-url .fu-remove:hover { color: var(--red2); }
+  .feed-add { display: flex; gap: 4px; margin-top: 4px; }
+  .feed-input { flex: 1; font-size: 10px; padding: 6px 8px; }
+
+  .history-item { display: flex; align-items: flex-start; justify-content: space-between; padding: 8px 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 3px; }
+  .history-item .hi-left { flex: 1; min-width: 0; }
+  .history-item .hi-entry { margin-bottom: 2px; }
+  .history-item .hi-name { font-size: 10px; color: var(--red2); font-weight: 600; }
+  .history-item .hi-id { display: block; font-size: 8px; font-family: monospace; color: var(--t4); }
+  .history-item .hi-date { color: var(--t3); font-size: 9px; flex-shrink: 0; margin-left: 8px; white-space: nowrap; }
+  .empty { text-align: center; padding: 24px; color: var(--t3); font-size: 11px; }
+
+  .lock-notice { border: 1px solid rgba(232,135,91,0.3); background: rgba(232,135,91,0.06); border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; display: none; font-size: 10px; color: var(--orange); line-height: 1.5; }
+  .lock-notice.show { display: block; }
+  .lock-icon { display: none; }
+  .test-area { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+  .test-area p { font-size: 10px; color: var(--t3); margin-bottom: 8px; line-height: 1.5; }
+  input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="logo"><img src="icon128.png" alt=""></div>
+      <div><h1>Digital Guard</h1><div class="ver">v1.0.0</div></div>
+    </div>
+    <div class="dot" id="h-status"></div>
+  </div>
+  <div class="red-bar"></div>
+  <div class="tabs">
+    <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="about">About</div>
+    <div class="tab" data-tab="settings">Settings</div>
+    <div class="tab" data-tab="history">History</div>
+  </div>
+
+  <div class="panel active" id="panel-dashboard">
+    <div class="alert" id="alert-bar" onclick="document.getElementById('btn-view-threats').click()">
+      <div><div class="alert-text" id="ab-text">Threats detected</div><div class="alert-sub">Click to review and remove</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat" id="stat-threats"><div class="num" id="n-threats">0</div><div class="lbl">Threats</div></div>
+      <div class="stat"><div class="num" id="n-extensions">0</div><div class="lbl">Extensions</div></div>
+      <div class="stat"><div class="num" id="n-feed">0</div><div class="lbl">Feed</div></div>
+      <div class="stat"><div class="num" id="n-custom">0</div><div class="lbl">Custom</div></div>
+    </div>
+    <div class="card">
+      <div class="card-row"><span class="card-label">Last sync</span><span class="card-value" id="d-fetch">-</span></div>
+      <div class="card-row"><span class="card-label">Last scan</span><span class="card-value" id="d-scan">-</span></div>
+    </div>
+    <button class="btn" id="btn-scan">Scan now</button>
+    <button class="btn" id="btn-force-feed">Force feed update</button>
+    <button class="btn btn-danger" id="btn-view-threats" style="display:none">View detected threats</button>
+  </div>
+
+  <div class="panel" id="panel-about">
+    <div class="about-hero">
+      <div class="shield">🛡️</div>
+      <p>Native browser extension that detects malicious extensions using the <strong>ExtSentry</strong> community threat feed.</p>
+    </div>
+    <div class="feat-list">
+      <div class="feat"><strong>Auto-sync</strong> fetches blocklist feeds periodically, supports multiple sources.</div>
+      <div class="feat"><strong>Instant detection</strong> scans on startup and when new extensions are installed.</div>
+      <div class="feat"><strong>Persistent warnings</strong> full-page alerts repeating until threats are removed.</div>
+      <div class="feat"><strong>Auto-disable</strong> optionally disable threats automatically on detection.</div>
+      <div class="feat"><strong>100% local</strong> no telemetry. Only fetches public blocklist feeds.</div>
+    </div>
+    <div class="section" style="margin-top: 12px;">
+      <div class="section-title">Links</div>
+      <a class="about-link" href="https://github.com/ExtSentry/ExtSentry-Guard" target="_blank">Extension source code - github.com/ExtSentry/ExtSentry-Guard</a>
+      <a class="about-link" href="https://github.com/ExtSentry/ExtSentry.github.io" target="_blank">Threat feed repository - github.com/ExtSentry/ExtSentry.github.io</a>
+      <a class="about-link" href="https://github.com/mthcht" target="_blank">Author - mthcht</a>
+    </div>
+    <div id="about-managed-info"></div>
+  </div>
+
+  <div class="panel" id="panel-settings">
+    <div class="lock-notice" id="lock-notice">Settings locked by <span id="lock-org">your admin</span>. Contact IT to request changes.</div>
+    <div class="section">
+      <div class="section-title">Protection <span class="lock-icon" id="lock-icon"></span></div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Auto-disable threats</div><div class="toggle-desc">Disable malicious extensions automatically on detection</div></div>
+        <label class="toggle"><input type="checkbox" id="opt-autodisable"><span class="slider"></span></label>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Feed sources</div>
+      <div class="hint">Default feed is always active. Add extra URLs - each must return one extension ID per line.</div>
+      <div id="feed-list"></div>
+      <div class="feed-add">
+        <input type="text" id="new-feed-url" placeholder="https://example.com/blocklist.txt" class="feed-input">
+        <button class="btn btn-sm" id="btn-add-feed">Add</button>
+      </div>
+      <div class="result-msg" id="feed-result"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Test warning</div>
+      <div class="test-area">
+        <p>Temporarily flags a random extension to verify the warning flow.</p>
+        <div class="btn-row">
+          <button class="btn btn-warn" id="btn-test">Run test</button>
+          <button class="btn" id="btn-clear-test" style="display:none">Clear</button>
+        </div>
+        <div class="result-msg" id="test-result"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Custom blocklist <span class="inline-badge" id="custom-badge">0</span></div>
+      <div class="hint">Extension IDs to monitor - one per line or comma-separated.</div>
+      <textarea id="custom-ids" placeholder="abcdefghijklmnopabcdefghijklmnop"></textarea>
+      <div class="btn-row" style="margin-top: 4px;">
+        <button class="btn" id="btn-save-custom">Save</button>
+        <button class="btn" id="btn-export-custom">Export</button>
+        <button class="btn" id="btn-import-custom">Import</button>
+      </div>
+      <input type="file" id="import-file" accept=".txt,.csv,.json">
+      <div class="result-msg" id="custom-result"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Whitelist <span class="inline-badge" id="white-badge">0</span></div>
+      <div class="hint">Extension IDs to always allow (false positives).</div>
+      <textarea id="whitelist-ids" placeholder="IDs to whitelist, one per line"></textarea>
+      <button class="btn" id="btn-save-whitelist">Save whitelist</button>
+      <div class="result-msg" id="white-result"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-history">
+    <div class="section-title">Detection history</div>
+    <div id="history-list"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

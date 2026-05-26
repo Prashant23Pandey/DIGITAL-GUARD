@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Digital Guard",
+  "version": "1.0.0",
+  "description": "Detects and warns about known malicious browser extensions using the ExtSentry IOC feed. Supports enterprise managed configuration via GPO/MDM.",
+  "permissions": ["management", "alarms", "storage", "notifications", "declarativeNetRequest"],
+  "host_permissions": ["https://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "storage": {
+    "managed_schema": "managed_schema.json"
+  }
+}

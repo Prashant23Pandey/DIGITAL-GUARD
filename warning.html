@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ExtSentry - Malicious Extension Detected</title>
+<style>
+  :root {
+    --bg: #0f1120; --bg2: #161a2e; --bg3: #1c2240; --bg4: #232a4a;
+    --red: #c23b3b; --red2: #e04848; --redbg: rgba(194,59,59,0.08); --redborder: rgba(194,59,59,0.3);
+    --redmetal: linear-gradient(135deg, #8b2232, #c23b3b, #d4574a);
+    --orange: #e8875b; --green: #2ec4b6; --blue: #3a86ff;
+    --t1: #e8eaf0; --t2: #9ba3bf; --t3: #5c6484; --t4: #3a4060;
+    --border: #1e2545; --border2: #2a3055;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--t1); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  .top-bar { border-bottom: 3px solid; border-image: var(--redmetal) 1; padding: 36px 24px; text-align: center; background: var(--bg2); }
+  .top-bar h1 { font-size: 22px; font-weight: 700; }
+  .top-bar p { font-size: 13px; color: var(--t3); margin-top: 8px; max-width: 540px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+
+  .container { max-width: 660px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  .summary { display: flex; gap: 8px; margin-bottom: 20px; }
+  .summary-card { flex: 1; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+  .summary-card .sc-num { font-size: 28px; font-weight: 800; }
+  .summary-card .sc-lbl { font-size: 9px; color: var(--t3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  .summary-card.danger { border-color: var(--red); background: var(--redbg); }
+  .summary-card.danger .sc-num { color: var(--red2); }
+
+  .org-bar { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; align-items: center; gap: 12px; display: none; font-size: 12px; color: var(--t2); line-height: 1.5; }
+  .org-bar strong { color: var(--t1); }
+
+  .threat { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 12px; position: relative; overflow: hidden; }
+  .threat::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--redmetal); }
+  .threat.has-danger { border-color: var(--redborder); }
+  .threat.test { border-color: rgba(232,135,91,0.3); }
+  .threat.test::before { background: var(--orange); }
+
+  .threat-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; padding-left: 8px; }
+  .threat-icon { width: 42px; height: 42px; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; overflow: hidden; color: var(--t3); }
+  .threat-icon img { width: 100%; height: 100%; object-fit: cover; }
+  .threat-name { font-size: 15px; font-weight: 700; }
+  .threat-meta { font-size: 10px; color: var(--t3); margin-top: 2px; }
+  .threat-id { font-size: 10px; color: var(--t3); font-family: monospace; }
+
+  .test-badge { display: inline-block; border: 1px solid rgba(232,135,91,0.4); color: var(--orange); background: rgba(232,135,91,0.08); font-size: 9px; font-weight: 700; padding: 3px 10px; border-radius: 4px; margin-bottom: 10px; margin-left: 8px; text-transform: uppercase; letter-spacing: 0.8px; }
+
+  .threat-status { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; padding: 4px 10px; border-radius: 4px; margin-bottom: 14px; margin-left: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .threat-status.enabled { background: var(--redbg); color: var(--red2); border: 1px solid var(--redborder); }
+  .threat-status.disabled { background: rgba(92,100,132,0.1); color: var(--t3); border: 1px solid var(--border); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .enabled .status-dot { background: var(--red2); animation: pulse 1.5s infinite; }
+  .disabled .status-dot { background: var(--t3); }
+  @keyframes pulse { 50% { opacity: 0.3; } }
+
+  .nag-banner { background: rgba(232,135,91,0.06); border: 1px solid rgba(232,135,91,0.3); border-radius: 8px; padding: 12px 14px; margin: 0 8px 14px; font-size: 12px; color: var(--orange); line-height: 1.6; }
+  .nag-banner strong { color: #f0a070; }
+
+  .threat-explain { font-size: 12px; color: var(--t2); line-height: 1.7; margin: 0 8px 16px; padding: 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; }
+  .threat-explain strong { color: var(--t1); }
+
+  .perms { margin: 0 8px 16px; }
+  .perms-title { font-size: 9px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .perm-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+  .perm-tag { font-size: 9px; padding: 3px 7px; border-radius: 4px; font-family: monospace; background: var(--bg3); border: 1px solid var(--border); color: var(--t3); }
+  .perm-tag.host { border-color: rgba(58,134,255,0.2); color: var(--blue); background: rgba(58,134,255,0.05); }
+
+  .threat-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 8px; }
+  .btn { flex: 1; min-width: 120px; padding: 10px 16px; border: 1px solid var(--border2); border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.15s; background: var(--bg3); color: var(--t2); display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn:hover:not(:disabled) { border-color: var(--t3); color: var(--t1); background: var(--bg4); }
+  .btn:disabled { opacity: 0.3; cursor: wait; }
+  .btn-uninstall { border-color: var(--redborder); color: var(--red2); background: var(--redbg); }
+  .btn-uninstall:hover:not(:disabled) { background: rgba(194,59,59,0.14); border-color: var(--red); }
+  .btn-disable { border-color: rgba(232,135,91,0.3); color: var(--orange); background: rgba(232,135,91,0.06); }
+  .btn-disable:hover { background: rgba(232,135,91,0.12); }
+  .btn-whitelist { color: var(--t3); }
+  .btn-whitelist:hover { color: var(--green); border-color: rgba(46,196,182,0.3); }
+  .btn-dismiss { color: var(--t3); }
+
+  .cancel-warning { border: 1px dashed var(--red); background: var(--redbg); border-radius: 8px; padding: 12px; margin: 12px 8px 0; font-size: 12px; color: var(--red2); line-height: 1.6; animation: shake 0.4s ease-in-out; }
+  .cancel-warning strong { color: var(--red2); }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+
+  .manual-steps { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin: 12px 8px 0; font-size: 12px; color: var(--t2); line-height: 1.7; }
+  .manual-steps strong { color: var(--t1); }
+  .manual-steps ol { padding-left: 20px; margin-top: 6px; }
+  .manual-steps code { background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: 11px; color: var(--green); }
+
+  .action-feedback { min-height: 0; margin: 0 8px; }
+  .all-clear { text-align: center; padding: 80px 20px; }
+  .all-clear h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .all-clear p { font-size: 12px; color: var(--t3); }
+</style>
+</head>
+<body>
+  <div class="top-bar">
+    <h1>Malicious Extension Detected</h1>
+    <p>ExtSentry has identified dangerous extensions flagged in the community threat intelligence feed. Remove them to protect your data and privacy.</p>
+  </div>
+  <div class="container">
+    <div class="org-bar" id="org-bar"></div>
+    <div class="summary" id="summary"></div>
+    <div id="threats"></div>
+  </div>
+  <script src="warning.js"></script>
+</body>
+</html>

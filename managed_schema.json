@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "properties": {
+    "feed_urls": {
+      "title": "Blocklist Feed URLs",
+      "description": "List of URLs to fetch malicious extension ID lists from. Each URL should return one extension ID per line.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "custom_blocklist": {
+      "title": "Admin Blocklist",
+      "description": "Extension IDs to block, managed by the admin. Users cannot override these.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "whitelist": {
+      "title": "Admin Whitelist",
+      "description": "Extension IDs to always allow, even if they appear in a feed. Overrides all blocklists.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "auto_disable": {
+      "title": "Auto-Disable Threats",
+      "description": "Automatically disable detected malicious extensions without waiting for user action.",
+      "type": "boolean"
+    },
+    "check_interval_minutes": {
+      "title": "Feed Check Interval (minutes)",
+      "description": "How often to re-fetch the blocklist feeds.",
+      "type": "integer"
+    },
+    "warn_interval_minutes": {
+      "title": "Warning Repeat Interval (minutes)",
+      "description": "How often to re-show warnings for unresolved threats.",
+      "type": "integer"
+    },
+    "lock_settings": {
+      "title": "Lock User Settings",
+      "description": "If true, users cannot change auto-disable, intervals, or whitelist. Admin policy takes full control.",
+      "type": "boolean"
+    },
+    "adblock_enabled": {
+      "title": "Ad Blocker Enabled",
+      "description": "Enable or disable built-in ad blocking rule enforcement.",
+      "type": "boolean"
+    },
+    "adblock_rules": {
+      "title": "Ad Block Rules",
+      "description": "Additional ad block URL patterns or domains to block. Use hostnames like example.com or adblock-style filters.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "org_name": {
+      "title": "Organization Name",
+      "description": "Displayed in the UI to indicate the extension is managed.",
+      "type": "string"
+    },
+    "org_message": {
+      "title": "Custom Warning Message",
+      "description": "Additional message shown on the warning page, e.g. 'Contact IT at helpdesk@company.com'.",
+      "type": "string"
+    }
+  }
+}
