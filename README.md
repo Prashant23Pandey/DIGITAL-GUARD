@@ -8,15 +8,6 @@
   <strong>Browser extension that warn and block known malicious Browser extensions installed</strong>
 </p>
 
-<p align="center">
-  <a href="https://github.com/ExtSentry/ExtSentry-Guard/releases"><img src="https://img.shields.io/badge/version-1.0.0-C2694F" alt="Version"></a>
-  <a href="#"><img src="https://img.shields.io/badge/manifest-v3-blue" alt="Manifest V3"></a>
-  <a href="https://chrome.google.com/webstore"><img src="https://img.shields.io/badge/chrome-web%20store-4285F4?logo=googlechrome&logoColor=white" alt="Chrome Web Store"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
-</p>
-
----
-
 Digital Guard compares your installed browser extensions against the [ExtSentry community threat intelligence feed](https://github.com/ExtSentry/ExtSentry.github.io) and alerts you when a known malicious extension is detected. Threats are automatically disabled and a persistent warning guides you through removal.
 
 ## How it works
@@ -128,13 +119,3 @@ Digital Guard runs entirely locally. It does not collect, transmit, or store any
 Found a malicious extension not in the feed? The upstream data lives in [mthcht/awesome-lists](https://github.com/mthcht/awesome-lists). Open a pull request there to add it.
 
 For bugs, feature requests, or improvements to the extension itself, open an issue or PR on this repository.
-
-## Related projects
-
-- [ExtSentry Feed](https://github.com/ExtSentry/ExtSentry.github.io) - threat intelligence feed and landing page
-- [mthcht/awesome-lists](https://github.com/mthcht/awesome-lists) - upstream community-curated browser extension threat list
-- [extsentry.github.io](https://extsentry.github.io) - feed downloads, extension checker, policy generator, forensic traces guide
-
-## Author
-
-[mthcht](https://github.com/mthcht)
